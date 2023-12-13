@@ -46,16 +46,16 @@ public class WolfAndHunters: BoardGame, TwoPlayerGame, BaseGame {
     
     public func start() {
         players[0].startPos = [
-            Cell(x: cells["A8"]![0], y: cells["A8"]![1]),
-            Cell(x: cells["C8"]![0], y: cells["C8"]![1]),
-            Cell(x: cells["E8"]![0], y: cells["E8"]![1]),
-            Cell(x: cells["G8"]![0], y: cells["G8"]![1])
+            Cell(x: cells["A2"]![0], y: cells["A2"]![1]),
+            Cell(x: cells["A4"]![0], y: cells["A4"]![1]),
+            Cell(x: cells["A6"]![0], y: cells["A6"]![1]),
+            Cell(x: cells["A8"]![0], y: cells["A8"]![1])
         ]
         
         players[0].endPos = [
-            Cell(x: cells["B1"]![0], y: cells["B1"]![1]),
-            Cell(x: cells["D1"]![0], y: cells["D1"]![1]),
-            Cell(x: cells["F1"]![0], y: cells["F1"]![1]),
+            Cell(x: cells["H7"]![0], y: cells["H7"]![1]),
+            Cell(x: cells["H5"]![0], y: cells["H5"]![1]),
+            Cell(x: cells["H3"]![0], y: cells["H3"]![1]),
             Cell(x: cells["H1"]![0], y: cells["H1"]![1])
         ]
         
@@ -63,14 +63,14 @@ public class WolfAndHunters: BoardGame, TwoPlayerGame, BaseGame {
         players[0].curPos = players[0].startPos
         
         players[1].startPos = [
-            Cell(x: cells["D1"]![0], y: cells["D1"]![1])
+            Cell(x: cells["H3"]![0], y: cells["H3"]![1])
         ]
         
         players[1].endPos = [
-            Cell(x: cells["A8"]![0], y: cells["A8"]![1]),
-            Cell(x: cells["C8"]![0], y: cells["C8"]![1]),
-            Cell(x: cells["E8"]![0], y: cells["E8"]![1]),
-            Cell(x: cells["G8"]![0], y: cells["G8"]![1])
+            Cell(x: cells["A2"]![0], y: cells["A2"]![1]),
+            Cell(x: cells["A4"]![0], y: cells["A4"]![1]),
+            Cell(x: cells["A6"]![0], y: cells["A6"]![1]),
+            Cell(x: cells["A8"]![0], y: cells["A8"]![1])
         ]
         players[1].curPos = players[1].startPos
     }
@@ -163,14 +163,14 @@ public class WolfAndHunters: BoardGame, TwoPlayerGame, BaseGame {
         if r < 5 {
             while true {
                 //wolf
-                if (player<0) {
+                if (player>0) {
                     if (0...7).contains(cell.x+player) &&
                         (0...7).contains(cell.y+player) && board.getField(x: cell.x+player, y: cell.y+player) == 0  {
                         cell.setX(x: cell.x + player)
                         cell.setY(y: cell.y + player)
                         updateBoard()
                         isMove = true
-                        continue
+                        break
                     }
                     
                     else if (0...7).contains(cell.x+player) &&
@@ -179,7 +179,7 @@ public class WolfAndHunters: BoardGame, TwoPlayerGame, BaseGame {
                         cell.setY(y: cell.y - player)
                         updateBoard()
                         isMove = true
-                        continue
+                        break
                     }
                     else if (0...7).contains(cell.x+2*player) &&
                                 (0...7).contains(cell.y+2*player) && board.getField(x: cell.x+2*player, y: cell.y+2*player) == 0  {
@@ -187,7 +187,7 @@ public class WolfAndHunters: BoardGame, TwoPlayerGame, BaseGame {
                         cell.setY(y: cell.y + 2*player)
                         updateBoard()
                         isMove = true
-                        continue
+                        break
                     }
                     else if (0...7).contains(cell.x+2*player) &&
                                 (0...7).contains(cell.y-2*player) && board.getField(x: cell.x+2*player, y: cell.y-2*player) == 0  {
@@ -195,10 +195,10 @@ public class WolfAndHunters: BoardGame, TwoPlayerGame, BaseGame {
                         cell.setY(y: cell.y - 2*player)
                         updateBoard()
                         isMove = true
-                        continue
+                        break
                     }else { return false }
                 }
-                if(player>0){
+                if(player<0){
                     //hunters
                     if (0...7).contains(cell.x+player) &&
                         (0...7).contains(cell.y+player) && board.getField(x: cell.x+player, y: cell.y+player) == 0  {
@@ -206,7 +206,7 @@ public class WolfAndHunters: BoardGame, TwoPlayerGame, BaseGame {
                         cell.setY(y: cell.y + player)
                         updateBoard()
                         isMove = true
-                        continue
+                        break
                     }
                     
                     else if (0...7).contains(cell.x-player) &&
@@ -215,7 +215,7 @@ public class WolfAndHunters: BoardGame, TwoPlayerGame, BaseGame {
                         cell.setY(y: cell.y + player)
                         updateBoard()
                         isMove = true
-                        continue
+                        break
                     }
                     if (0...7).contains(cell.x+player) &&
                         (0...7).contains(cell.y-player) && board.getField(x: cell.x+player, y: cell.y-player) == 0  {
@@ -223,7 +223,7 @@ public class WolfAndHunters: BoardGame, TwoPlayerGame, BaseGame {
                         cell.setY(y: cell.y - player)
                         updateBoard()
                         isMove = true
-                        continue
+                        break
                     }
                     
                     else if (0...7).contains(cell.x-player) &&
@@ -232,7 +232,7 @@ public class WolfAndHunters: BoardGame, TwoPlayerGame, BaseGame {
                         cell.setY(y: cell.y - player)
                         updateBoard()
                         isMove = true
-                        continue
+                        break
                     }
                     else { return false }
                 }
@@ -241,7 +241,7 @@ public class WolfAndHunters: BoardGame, TwoPlayerGame, BaseGame {
         else{
             while true {
                 //wolf
-                if (player<0) {
+                if (player>0) {
                     if (0...7).contains(cell.x+player) &&
                         (0...7).contains(cell.y-player) && board.getField(x: cell.x+player, y: cell.y-player) == 0  {
                         cell.setX(x: cell.x + player)
@@ -276,7 +276,7 @@ public class WolfAndHunters: BoardGame, TwoPlayerGame, BaseGame {
                         break
                     }else { return false }
                 }
-                if(player>0){
+                if(player<0){
                     //hunters
                     if (0...7).contains(cell.x+player) &&
                         (0...7).contains(cell.y-player) && board.getField(x: cell.x+player, y: cell.y-player) == 0  {
@@ -323,7 +323,7 @@ public class WolfAndHunters: BoardGame, TwoPlayerGame, BaseGame {
     public func checkMove(player: Int, cell: Cell) -> Bool {
         
             //wolf
-            if (player<0) {
+            if (player>0) {
                 if ((0...7).contains(cell.x+player) && (0...7).contains(cell.y+player) && board.getField(x: cell.x+player, y: cell.y+player) == 0)  {
                     return true
                 }
@@ -341,7 +341,7 @@ public class WolfAndHunters: BoardGame, TwoPlayerGame, BaseGame {
                     return true
                 }
             }
-            if(player>0){
+            if(player<0){
                 
                     //hunters
                     if (0...7).contains(cell.x+player) &&
@@ -380,6 +380,13 @@ public class WolfAndHunters: BoardGame, TwoPlayerGame, BaseGame {
             if (cell.x == el.x && cell.y == el.y) {
                 //print("isFinish")
                 isFinish = true
+            }
+        }
+        if (player<0) {
+            if (cell.x == 0) {
+                //print("isFinish")
+                isFinish = true
+                isMove=false
             }
         }
         if (!isMove && isFinish) {

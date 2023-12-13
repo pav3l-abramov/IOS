@@ -34,12 +34,12 @@ public class Board {
     }
     
     public func showBoard() {
-        print("   A B C D E F G H\n")
         var i = 1
         for row in data {
-            print("\(i) ", terminator: " ")
             for el in row {
-                print(el+1, terminator: " ")
+                if (el==1){print("🔫", terminator: " ")}
+                else if (el==0){print("⚫", terminator: " ")}
+                else {print("🐺", terminator: " ")}
             }
             print()
             i+=1
