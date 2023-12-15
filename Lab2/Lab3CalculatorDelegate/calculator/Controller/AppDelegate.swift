@@ -29,7 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         /////////////////////
                            //
-        calculator = nil   // инстанцируйте свою модель калькулятора здесь!
+        calculator = CalculatorImplementation(inputLength:10, maxFraction:10)//nil   // инстанцируйте свою модель калькулятора здесь!
                            //
         /////////////////////
         

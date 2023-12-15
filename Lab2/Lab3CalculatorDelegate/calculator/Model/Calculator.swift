@@ -9,6 +9,7 @@
 import Foundation
 
 
+
 /// Доступные операции
 public enum Operation: String {
     case add = "+",
@@ -25,6 +26,9 @@ public protocol Calculator: class { // можно реализовывать т�
     
     /// Представитель – объект, реагирующий на изменение внутреннего состояния калькулятора
     var delegate: CalculatorDelegate? { get set }
+    
+    var len: UInt {get}
+    var frac: UInt {get}
     
     /// Инициализатор
     /// `inputLength` – максимальная длина поля ввода (количество символов)
@@ -68,135 +72,143 @@ public protocol Calculator: class { // можно реализовывать т�
     func reset()
 }
 
-
-
-public class CalculatorImpl: Calculator {
+class CalculatorImplementation: Calculator {
+    var delegate: CalculatorDelegate?
     
-    public weak var delegate: CalculatorDelegate?
+    var len: UInt
+    var frac: UInt
     
-    private let inputLength: UInt
-    private let maxFractionDigits: UInt
-    
-    private var _result: Double?
-    private var _operation: Operation?
-    private var _input: Double?
-    
-    public var result: Double? {
-        return _result
+    required init(inputLength len: UInt, maxFraction frac: UInt) {
+        self.len = len
+        self.frac = frac
+        result = 0
+        input = nil
+        operation = nil
+        fractionDigits = 0
+        hasPoint = false
+        curCount = 0
     }
     
-    public var operation: Operation? {
-        return _operation
-    }
+    var curCount: UInt
+    var result: Double?
+    var operation: Operation?
+    var input: Double?
+    var hasPoint: Bool
+    var fractionDigits: UInt
     
-    
-    public var input: Double? {
-        return _input
-    }
-    
-    public var hasPoint: Bool {
-        if let input = _input {
-            return input.truncatingRemainder(dividingBy: 1) != 0
+    func addDigit(_ d: Int) {
+        curCount += 1
+        if (curCount > len){
+            delegate?.calculatorDidInputOverflow(self)
+            curCount -= 1
+            return
         }
-        return false
-    }
-    
-    public var fractionDigits: UInt {
-        if let input = _input {
-            let fraction = input - input.rounded(.towardZero)
-            let precision = maxFractionDigits - UInt(String(fraction).count - 2)
-            return precision
+        if(input == nil) {
+            input = 0
         }
-        return 0
-    }
-    
-    public required init(inputLength len: UInt, maxFraction frac: UInt) {
-        inputLength = len
-        maxFractionDigits = frac
-    }
-    
-    public func addDigit(_ d: Int) {
-        if let input = _input {
-            if String(input).count - (hasPoint ? 1 : 0) < Int(inputLength) {
-                let newInput = input * 10 + Double(d)
-                _input = newInput
-                delegate?.calculatorDidUpdateValue(self, with: newInput, valuePrecision: fractionDigits)
-            } else {
+        if (input == 0 && d == 0 && !hasPoint) {
+            curCount -= 1
+            return
+        }
+        if (hasPoint){
+            fractionDigits += 1
+            if (fractionDigits > frac){
                 delegate?.calculatorDidInputOverflow(self)
+                fractionDigits -= 1
+                curCount -= 1
+                return
             }
-        } else {
-            _input = Double(d)
-            delegate?.calculatorDidUpdateValue(self, with: Double(d), valuePrecision: 0)
+            input! += Double(d) * pow(10, -Double(fractionDigits))
         }
+        else {
+            input! = input! * 10 + Double(d)
+        }
+        delegate?.calculatorDidUpdateValue(self, with: input!, valuePrecision: fractionDigits)
     }
     
-    public func addPoint() {
-        if let input = _input {
-            if !hasPoint {
-                _input = input + pow(10, -Double(maxFractionDigits))
-                delegate?.calculatorDidUpdateValue(self, with: _input!, valuePrecision: 1)
+    func addPoint() {
+        self.hasPoint = true
+        if (input == nil) {
+            input = 0
+            curCount += 1
+        }
+        delegate?.calculatorDidUpdateValue(self, with: input!, valuePrecision: fractionDigits)
+    }
+    
+    
+    func addOperation(_ op: Operation) {
+        if (op == .sign){
+            input = -(input ?? result ?? 0)
+            delegate?.calculatorDidUpdateValue(self, with: input!, valuePrecision: fractionDigits)
+            return
+        }
+        if (op == .perc) {
+            if (operation == nil && result != nil) {
+                result! /= 100
+                delegate?.calculatorDidUpdateValue(self, with: result!, valuePrecision: UInt(Decimal(result!).significantFractionalDecimalDigits))
             }
-        } else {
-            _input = 0
-            delegate?.calculatorDidUpdateValue(self, with: 0, valuePrecision: 1)
-        }
-    }
-    
-    public func addOperation(_ op: Operation) {
-        if let input = _input {
-            if operation != nil {
-                compute()
-                _input = _result
-                _result = nil
-                _operation = op
-                delegate?.calculatorDidUpdateValue(self, with: _input!, valuePrecision: fractionDigits)
-            } else {
-                _result = input
-                _operation = op
-                _input = nil
+            else {
+                input = (input ?? result ?? 0) / 100 * (result ?? 1)
+                delegate?.calculatorDidUpdateValue(self, with: input!, valuePrecision: UInt(Decimal(input!).significantFractionalDecimalDigits))
             }
-        } else if result != nil {
-            _operation = op
+            return
         }
+        if (input == nil){
+            self.operation = op
+            return
+        }
+        compute()
+        self.operation = op
     }
-    public func compute() {
-        if let input = _input, let operation = _operation {
-            switch operation {
-            case .add:
-                _result = (_result ?? 0) + input
-            case .sub:
-                _result = (_result ?? 0) - input
-            case .mul:
-                _result = (_result ?? 1) * input
-            case .div:
-                if input == 0 {
-                    delegate?.calculatorDidDivideByZero(self)
-                } else {
-                    _result = (_result ?? 1) / input
-                }
-            case .sign:
-                _input = -input
-                delegate?.calculatorDidUpdateValue(self, with: _input!, valuePrecision: fractionDigits)
-            case .perc:
-                _input = _input! / 100
-                delegate?.calculatorDidUpdateValue(self, with: _input!, valuePrecision: fractionDigits)
+    
+    func compute() {
+        if (result == nil){
+            result = input
+            clear()
+            delegate?.calculatorDidUpdateValue(self, with: result!, valuePrecision: UInt(Decimal(result!).significantFractionalDecimalDigits))
+            return
+        }
+        switch operation {
+        case .add:
+            result! += input ?? result ?? 0
+        case .sub:
+            result! -= input ?? result ?? 0
+        case .mul:
+            result! *= input ?? result ?? 0
+        case .div:
+            if ((input ?? result ?? 0) == 0){
+                delegate?.calculatorDidDivideByZero(self)
+                return
             }
-            _operation = nil
-            _input = nil
-            delegate?.calculatorDidUpdateValue(self, with: _result!, valuePrecision: fractionDigits)
+            result! /= input!
+        default:
+            return
         }
+        clear()
+        operation = nil
+        delegate?.calculatorDidUpdateValue(self, with: result!, valuePrecision: fractionDigits)
     }
     
-    public func clear() {
-        _input = nil
-        delegate?.calculatorDidUpdateValue(self, with: 0, valuePrecision: 0)
+    func clear() {
+        input = nil
+        fractionDigits = 0
+        hasPoint = false
+        curCount = 0
+        delegate?.calculatorDidUpdateValue(self, with: input ?? 0, valuePrecision: fractionDigits)
     }
     
-    public func reset() {
-        _result = nil
-        _operation = nil
-        _input = nil
-        delegate?.calculatorDidUpdateValue(self, with: 0, valuePrecision: 0)
+    func reset() {
+        result = nil
+        operation = nil
+        clear()
+        delegate?.calculatorDidUpdateValue(self, with: input ?? 0, valuePrecision: fractionDigits)
     }
     
+    
+}
+
+extension Decimal {
+    var significantFractionalDecimalDigits: Int {
+        return max(-exponent, 0)
+    }
 }

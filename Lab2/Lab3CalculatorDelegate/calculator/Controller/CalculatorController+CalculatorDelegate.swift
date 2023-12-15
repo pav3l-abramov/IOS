@@ -10,16 +10,23 @@ import UIKit
 
 extension CalculatorController: CalculatorDelegate {
     
+    
     func calculatorDidUpdateValue(_ calculator: Calculator, with value: Double, valuePrecision fractionDigits: UInt) {
-        
-        print("Update Result with \(value), \(fractionDigits)")
         
         formatter.minimumFractionDigits = min(Int(fractionDigits), maximumFractionDigits)
         
-        if calculator.hasPoint, fractionDigits == 0 {
+        if (calculator.hasPoint && fractionDigits == 0) {
             // поставили запятую, но не ввели цифры после запятой
             outputLabel.text = formatter.string(from: NSNumber(value: value))! + formatter.decimalSeparator
-        } else {
+        }
+        else if (calculator.hasPoint && value == 0){
+            var zero_to_print = "0."
+            for _ in 0..<fractionDigits {
+                zero_to_print += "0"
+            }
+            outputLabel.text = zero_to_print
+        }
+        else {
             outputLabel.text = formatter.string(from: NSNumber(value: value))
         }
     }
@@ -64,7 +71,6 @@ extension CalculatorController: CalculatorDelegate {
                         }
         })
     }
-    
     func calculatorDidDivideByZero(_ calculator: Calculator) {
         print("Divide by zero error")
         let alert = UIAlertController(title: "Error", message: "Cannot divide by zero", preferredStyle: .alert)
