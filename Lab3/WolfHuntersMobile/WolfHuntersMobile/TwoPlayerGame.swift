@@ -21,15 +21,19 @@ public protocol TwoPlayerBaseGameDelegate: BaseGameDelegate, TwoPlayerGameDelega
 // Default Implementation
 
 extension TwoPlayerGameDelegate {
+    
     public func player(_ player: Player, didJoinTheGame game: TwoPlayerGame) {
         
         print("\(player.name) has joined the game")
+
     }
     
     public func player(_ player: Player, didTakeAction action: PlayerAction) {
+        
         switch action {
         case .win:
             print("\(player.name) wins!")
+       
             
         case let .move(xStart, yStart, xEnd, yEnd):
             print("\(player.name) moves from \(xStart),\(yStart) to \(xEnd),\(yEnd)")

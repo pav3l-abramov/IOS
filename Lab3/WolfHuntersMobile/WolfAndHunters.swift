@@ -10,10 +10,12 @@ public class WolfAndHunters: BoardGame, TwoPlayerGame, BaseGame {
     
     public var delegate: WolfAndHuntersDelegate?
     
+    
     public init() {
         
     }
     public var board = Board(boardsize: 8)
+    public var tracker=WolfAndHuntersTracker()
     
     public var players: [Player] = [WolfAndHuntersPlayer]()
     
@@ -21,6 +23,7 @@ public class WolfAndHunters: BoardGame, TwoPlayerGame, BaseGame {
         players.append(player)
         delegate?.player(player, didJoinTheGame: self)
     }
+
     
     private var numberOfTurns = 0
     
@@ -366,8 +369,7 @@ public class WolfAndHunters: BoardGame, TwoPlayerGame, BaseGame {
         return false
 
         }
-            
-    
+
     public func checkCell(player: Int, cell: Cell, Player: Player) {
         //print("checkCell")
         var isMove = false
@@ -392,6 +394,7 @@ public class WolfAndHunters: BoardGame, TwoPlayerGame, BaseGame {
         if (!isMove && isFinish) {
             Player.removeCurPos(cell: cell)
             board.setFullField(full: Player.side.rawValue, x: cell.x, y: cell.y)
+            //self.delegate?.changeTextViewText(text: "🐺 ")
         }
     }
 }

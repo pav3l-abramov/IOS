@@ -35,16 +35,20 @@ public class WolfAndHuntersPlayer: Player {
 }
 
 public class WolfAndHuntersTracker: WolfAndHuntersDelegate {
+    weak var delegate: ChangeTextViewTextDelegate?
     public init() {
         
     }
-    
+  
     public func gameDidStartTurn(_ game: BaseGame) {
         print("==================\n")
         print("Move \((game as! BaseGame).turns)")
+        self.delegate?.changeTextViewText(text: "==================\n")
+        self.delegate?.changeTextViewText(text: "Move \((game as! BaseGame).turns)")
     }
 
     public func playerDidStartTurn(_ player: Player) {
         print("\n\(player.name) start turn...")
+        self.delegate?.changeTextViewText(text: "\n\(player.name) start turn...")
     }
 }

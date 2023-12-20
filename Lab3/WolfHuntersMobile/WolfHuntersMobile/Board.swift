@@ -37,6 +37,7 @@ public class Board {
     }
     
     public func showBoard() {
+        self.delegate?.changeTextViewText(text: " \n")
         var i = 1
         for row in data {
             for el in row {
@@ -48,6 +49,7 @@ public class Board {
                     self.delegate?.changeTextViewText(text: "🐺 ")}
             }
             print()
+            self.delegate?.changeTextViewText(text: " \n")
             i+=1
         }
         //print("\n")

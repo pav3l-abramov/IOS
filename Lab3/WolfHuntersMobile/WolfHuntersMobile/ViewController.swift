@@ -11,20 +11,19 @@ import UIKit
 class ViewController: UIViewController {
     @IBAction func playButton(_ sender: UIButton) {
         textView.text="New Game"
-        
-        
-        let board=Board(boardsize: 8)
-        board.delegate=self
-        
-        
         let game = WolfAndHunters()
         game.delegate = WolfAndHuntersTracker()
+        game.board.delegate=self
 
         game.join(player: WolfAndHuntersPlayer(name: "Hunters", side: Side.white, achievedCells: 0))
-
         game.join(player: WolfAndHuntersPlayer(name: "Wolf", side: Side.black, achievedCells: 0))
+        textView.text.append("\n Hunters has joined the game \n Wolf has joined the game \n ================= \n")
+        game.tracker.delegate=self
         game.play()
-        print(textView.text)
+ 
+        //print(textView.text)
+        textView.text.append("\n Wolf wins!")
+        
 
     }
     

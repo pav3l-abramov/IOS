@@ -170,11 +170,11 @@ class CalculatorImplementation: Calculator {
         }
         switch operation {
         case .add:
-            result! += input ?? result ?? 0
+            result! += input  ?? 0
         case .sub:
-            result! -= input ?? result ?? 0
+            result! -= input ?? 0
         case .mul:
-            result! *= input ?? result ?? 0
+            result! *= input ?? 0
         case .div:
             if ((input ?? result ?? 0) == 0){
                 delegate?.calculatorDidDivideByZero(self)

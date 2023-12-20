@@ -13,6 +13,7 @@ public protocol BaseGame: Game {
 public protocol BaseGameDelegate: GameDelegate {
     func gameDidStartTurn(_ game: BaseGame)
     func gameDidEndTurn(_ game: BaseGame)
+    
 }
 
 // Default Implementation
