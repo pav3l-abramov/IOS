@@ -89,7 +89,6 @@ struct User: Identifiable {
     let name: String
     let phone: String
     let comment: String
-    let listAdoption: String
     
     
 }
@@ -135,3 +134,5 @@ enum DogBreed: String, Breed {
     case malamute
     
 }
+
+

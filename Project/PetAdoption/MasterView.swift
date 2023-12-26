@@ -24,7 +24,7 @@ struct MasterView: View {
         }
         
     }
-    
+    @State private var pets: [Pet] = []
     var body: some View {
         GeometryReader { geometry in
             NavigationView {

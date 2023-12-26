@@ -6,33 +6,33 @@
 //
 
 import SwiftUI
-struct AdoptView: View {
-    
-    @State private var _selectedPetType: Pet.PetType = .dogs
+import Foundation
 
-    
-    init() {
-        UINavigationBar.appearance().backgroundColor = .clear
-        UINavigationBar.appearance().tintColor = .white
-        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
-        UINavigationBar.appearance().shadowImage = UIImage()
-    }
+struct AdoptView: View {
+    //var pets: [Pet]
+    //@State private var _selectedPetType: Pet.PetType = .dogs
+    @ObservedObject var dataManager = DataManager()
+
     
     var body: some View {
         VStack {
-     
+
            
-            PetTypeView(selectedPetType: $_selectedPetType)
-            
-            ScrollView {
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
-                    ForEach(_selectedPetType.pets) { pet in
-                        if(pet.adopting==true){PetView(pet: pet)}
-                        
-                    }
-                }
-            }
+           // PetTypeView(selectedPetType: $_selectedPetType)
+   
+            Text(String(dataManager.myArray.count))
+//            List(dataManager){pet in
+//                PetView(pet: pet) }
+//            ScrollView {
+//                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
+//                    ForEach(pets) { pet in
+//                        PetView(pet: pet)
+//                        
+//                    }
+//                }
+//            }
             Spacer()
+            
         }
         .background(Color.white)
         .navigationBarTitle("", displayMode: .inline)

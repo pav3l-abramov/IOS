@@ -28,7 +28,7 @@ struct HomeView: View {
             
             ScrollView {
                 LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 20) {
-                    ForEach(_selectedPetType.pets) { pet in
+                    ForEach(_selectedPetType.petss) { pet in
                         PetView(pet: pet)
                     }
                 }
@@ -45,7 +45,7 @@ struct HomeView: View {
 
 private extension Pet.PetType {
     
-    var pets: [Pet] {
+    var petss: [Pet] {
         switch self {
         case .dogs:
             return Pet.dogs

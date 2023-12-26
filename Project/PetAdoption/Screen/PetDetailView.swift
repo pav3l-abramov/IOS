@@ -14,8 +14,8 @@ struct PetDetailView: View {
     
     let pet: Pet
     
- 
-    
+    var delegate: PetDelegate?
+    @ObservedObject var dataManager = DataManager()
     var body: some View {
         VStack {
             ScrollView (.vertical) {
@@ -83,7 +83,14 @@ struct PetDetailView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             HStack {
-                Button(action: {}) {
+                Button(action: {
+                    let newPet = Pet(name: pet.name, age: pet.age, type: pet.type, gender: pet.gender, images: pet.images, breed: pet.breed, weight: pet.weight, location: pet.location, book: pet.book, adopting: true)
+                    dataManager.myArray.append(newPet)
+                    //delegate?.addNewPet(newPet)
+                    print(newPet)
+                    
+                }
+                ) {
                     HStack {
                         Text("Adopt")
                             .font(.system(size: 18, weight: .medium))
@@ -93,6 +100,9 @@ struct PetDetailView: View {
                     .foregroundColor(.white)
                     .background(Color.primaryColor)
                     .cornerRadius(15)
+                }
+                NavigationLink(destination: AdoptView(dataManager:dataManager)) {
+                Text("check all list")
                 }
                 
             }
